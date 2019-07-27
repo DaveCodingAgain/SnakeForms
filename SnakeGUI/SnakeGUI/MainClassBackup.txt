@@ -1,0 +1,249 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace SnakeGUI
+{
+    public partial class Form1 : Form
+    {
+        public static int boardSize = 20;
+        static bool[,] playerHistory = new bool[boardSize, boardSize];
+        static int[,] historyAge = new int[boardSize, boardSize];
+        static Cell[,] gameBoard = new Cell[boardSize, boardSize];
+        static int playerX = 0;
+        static int playerY = 0;
+        static bool gameOver = false;
+        static int counter = 0;
+        static int playerDX = 1;
+        static int playerDY = 0;
+        static int playerLength = 0;
+        static int foodX = -1;
+        static int foodY = -1;
+        static Random rand = new Random();
+
+        public Form1()
+        {
+            InitializeComponent();
+            this.KeyPreview = true;
+            this.KeyPress +=
+                new KeyPressEventHandler(Form1_KeyPress);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            /*if (e.KeyChar >= 48 && e.KeyChar <= 57)
+            {
+                MessageBox.Show("Form.KeyPress: '" +
+                    e.KeyChar.ToString() + "' pressed.");
+
+                switch (e.KeyChar)
+                {
+                    case (char)49:
+                    case (char)52:
+                    case (char)55:
+                        MessageBox.Show("Form.KeyPress: '" +
+                            e.KeyChar.ToString() + "' consumed.");
+                        e.Handled = true;
+                        break;
+                }
+            }*/
+
+            /*MessageBox.Show("Form.KeyPress: '" +
+                e.KeyChar.ToString() + "' consumed.");
+            e.Handled = true;*/
+        }
+
+        private void StartButton_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(this.ToString());
+            //int boardSize = Convert.ToInt32(cbBoardSize.SelectedValue);
+            //int boardSize = Convert.ToInt32(cbBoardSize.Text);
+            //Console.WriteLine(BoardSize.Text);
+            //Console.WriteLine(boardSize);
+            //Cell[,] gameBoard = new Cell[boardSize, boardSize];
+
+            for (int i = 0; i < boardSize; i++)
+            {
+                for (int j = 0; j < boardSize; j++)
+                {
+                    gameBoard[i, j] = new Cell();
+                    gameBoard[i, j].Location = new Point((i + 1) * 21, (j + 2) * 21);
+                    gameBoard[i, j].Size = new System.Drawing.Size(21, 21);
+                    //gameBoard[i, j].Click += cellClicked;
+                    this.Controls.Add((gameBoard[i, j]));
+                }
+            }
+            gameBoard[0, 0].Image = SnakeGUI.Properties.Resources.snakeHR;
+            startButton.Hide();
+
+            while (UpdateScreen(playerX, playerY))
+            {
+                Console.WriteLine(playerX + " " + playerY);
+                counter++;
+                var stopwatch = Stopwatch.StartNew();
+                Thread.Sleep(500);
+                stopwatch.Stop();
+                playerX += playerDX;
+                playerY += playerDY;
+                //gameBoard[playerX, playerY].Image = gameBoard[playerX, playerY].snakeHR;
+
+                /*--------------------------
+                counter++;
+                // Console.WriteLine(counter.ToString());
+                var stopwatch = Stopwatch.StartNew();
+                Thread.Sleep(240);
+                stopwatch.Stop();
+
+                ConsoleKeyInfo keyPress = new ConsoleKeyInfo();
+
+                if (Console.KeyAvailable)
+                    keyPress = Console.ReadKey(true);
+
+                switch (keyPress.Key)
+                {
+                    case ConsoleKey.A:
+                        playerDX = -1;
+                        playerDY = 0;
+                        break;
+                    case ConsoleKey.S:
+                        playerDX = 0;
+                        playerDY = 1;
+                        break;
+                    case ConsoleKey.D:
+                        playerDX = 1;
+                        playerDY = 0;
+                        break;
+                    case ConsoleKey.W:
+                        playerDX = 0;
+                        playerDY = -1;
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        playerDX = -1;
+                        playerDY = 0;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        playerDX = 0;
+                        playerDY = 1;
+                        break;
+                    case ConsoleKey.RightArrow:
+                        playerDX = 1;
+                        playerDY = 0;
+                        break;
+                    case ConsoleKey.UpArrow:
+                        playerDX = 0;
+                        playerDY = -1;
+                        break;
+                }
+                ------------------*/
+
+
+
+            }
+
+        }
+
+        static bool UpdateScreen(int pX, int pY)
+        {
+
+
+            //if (playerX < 40 && playerY < 20 && playerX > -1 && playerY > -1 && !gameOver && (historyAge[playerX, playerY] < 0)) //OUT OF BOUNDS OR INTO SELF?
+                return true; //KEEP PLAYING
+            //else
+               // return false; //GAMEOVER
+            /*------------------------------------
+            Console.SetCursorPosition(0, 0);
+            for (int i = 0; i < gameBoard.GetLength(1); i++)
+            {
+                for (int j = 0; j < gameBoard.GetLength(0); j++)
+                {
+                    //int s = gameBoard[j, i];
+
+                    if (historyAge[j, i] > -1)
+                        historyAge[j, i]--;
+
+                    if (j == pX && i == pY) //MARK THE PLAYER'S POSITION
+                    {
+                        Console.SetCursorPosition(j, i);
+                        Console.Write('O');
+                        
+                        historyAge[j, i] = playerLength;
+                        if (j == foodX && i == foodY)
+                        {
+                            playerLength++;
+                            do
+                            {
+                                foodX = rand.Next(0, 39);
+                                foodY = rand.Next(0, 19);
+                            }
+                            while ((historyAge[foodX, foodY] > -1) ^ ((foodX == pX && foodY == pY)));
+
+
+                            Console.SetCursorPosition(foodX, foodY);
+                            Console.Write('X');
+                        }
+                    }
+                    else if (historyAge[j, i] > -1 && (!(j == pX && i == pY))) //IS CURRENTHISTORY AND NOT CURRENTPOSITION
+                    {
+                        //Console.SetCursorPosition(j, i);
+                        //Console.Write(historyAge[j, i]);
+                    }
+                    else
+                    {
+                        Console.SetCursorPosition(j, i);
+                        Console.Write('.');
+                    }
+                    if (j == foodX && i == foodY)
+                    {
+                        Console.SetCursorPosition(j, i);
+                        Console.Write('X');
+                    }
+
+                    Console.SetCursorPosition(0, 20);
+                    Console.WriteLine(foodX + ", " + foodY + "   ");
+
+
+                }
+            }
+
+
+            playerHistory[playerX, playerY] = true; //PLAYER HAS BEEN ON THIS SPACE
+            //historyAge[playerX, playerY] = 0;
+
+            playerX += playerDX;
+            playerY += playerDY;
+
+            if (playerX < 40 && playerY < 20 && playerX > -1 && playerY > -1 && !gameOver && (historyAge[playerX, playerY] < 0)) //OUT OF BOUNDS OR INTO SELF?
+                return true; //KEEP PLAYING
+            else
+                return false; //GAMEOVER
+            ----------------------*/
+
+
+        }
+
+        /*private void cbBoardSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }*/
+
+        /*private void cellClicked(Object sender, EventArgs e)
+        {
+            Cell senderCell = sender as Cell;
+            Console.Out.WriteLine(senderCell.Location);
+            senderCell.Image = senderCell.clickedCell;
+        }*/
+    }
+}

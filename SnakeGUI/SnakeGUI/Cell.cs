@@ -26,16 +26,14 @@ namespace SnakeGUI
         {
             cellX = cX;
             cellY = cY;
-            //Bitmap bitmap = new Bitmap(@"C:\Users\dbuckner\source\repos\GameUITest\GameUITest\emptyCell.bmp");
-            //this.Image = emptyCell;
-            this.Image = SnakeGUI.Properties.Resources.emptyCell;
+            this.Image = SnakeGUI.Properties.Resources.emptyCell; //INITIALIZE AS EMPTY CELL
             
         }
 
         public void processCell(int playerDX, int playerDY)
-        {
+        { //CHECK FOR PLAYER, DECREMENT TIMERS, DRAW CELL
             if(playerPresent)
-            {
+            { //DRAW PLAYER PICTURE IN APPROPRIATE DIRECTION
                 if (playerDX == 1 && playerDY == 0)
                     this.Image = SnakeGUI.Properties.Resources.snakeHR;
                 if (playerDX == -1 && playerDY == 0)
@@ -46,9 +44,8 @@ namespace SnakeGUI
                     this.Image = SnakeGUI.Properties.Resources.snakeHU;
             }
 
-
             if (!playerPresent)
-            {
+            { //IF PLAYER IS NO LONGER PRESENT, DECREMENT TIMER AND DRAW APPROPRIATE CELL
                 if (lengthTimer > 0)
                     this.Image = SnakeGUI.Properties.Resources.snakeBody;
                 else
@@ -56,7 +53,7 @@ namespace SnakeGUI
             }
 
             lengthTimer -= 1;
-            playerPresent = false;
+            playerPresent = false; //PROCESSING COMPLETE, PLAYER WILL MOVE OFF CELL NEXT TICK
 
         }
     }
